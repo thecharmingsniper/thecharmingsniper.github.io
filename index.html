@@ -21,6 +21,14 @@
           <span>CH</span>
           <span>SN</span>
         </div>
+        <button class="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span class="menu-label">MENU</span>
+        </button>
         <nav>
           <a href="#hero">Threshold</a>
           <a href="#origin">Origin</a>
@@ -30,6 +38,19 @@
           <a href="#archive">Merch</a>
         </nav>
       </header>
+      <div class="mobile-menu-panel" id="mobile-menu" aria-hidden="true">
+        <div class="mobile-menu-panel__inner">
+          <button class="mobile-menu-close" aria-label="Close menu">×</button>
+          <nav class="mobile-menu-nav">
+            <a href="#hero">Threshold</a>
+            <a href="#origin">Origin</a>
+            <a href="#synapse">Synapse</a>
+            <a href="#values">Frequencies</a>
+            <a href="#history">History</a>
+            <a href="#archive">Merch</a>
+          </nav>
+        </div>
+      </div>
 
       <main>
         <section class="hero section-drop" id="hero" data-interactive>

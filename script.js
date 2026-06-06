@@ -3,55 +3,40 @@ const body = document.body;
 const laserBeam = document.querySelector('.laser-beam');
 const laserCore = document.querySelector('.laser-core');
 const bpmValue = document.querySelector('.bpm');
+const topBar = document.querySelector('.top-bar');
+const statusStrip = document.querySelector('.status-strip');
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const mobileMenuPanel = document.querySelector('.mobile-menu-panel');
+const mobileMenuClose = document.querySelector('.mobile-menu-close');
+const menuLabel = mobileMenuToggle ? mobileMenuToggle.querySelector('.menu-label') : null;
+const interactiveSections = document.querySelectorAll('[data-interactive]');
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+let isMobileView = window.innerWidth < 768;
+
+if (isTouchDevice) {
+  body.classList.add('touch-device');
+}
+
+document.addEventListener('touchstart', () => body.classList.add('touch-device'), { once: true, passive: true });
+
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileView ? 1.5 : 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x050508, 0);
 
 const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1200);
 camera.position.set(0, 0, 40);
 
-const particleCount = 2200;
-const geometry = new THREE.BufferGeometry();
-const positions = new Float32Array(particleCount * 3);
-const speeds = new Float32Array(particleCount);
-const offsets = new Float32Array(particleCount);
-
-for (let i = 0; i < particleCount; i += 1) {
-  const radius = THREE.MathUtils.lerp(6, 28, Math.random());
-  const angle = Math.random() * Math.PI * 2;
-  positions[i * 3] = Math.cos(angle) * radius;
-  positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-  positions[i * 3 + 2] = Math.sin(angle) * radius;
-  speeds[i] = 0.8 + Math.random() * 1.8;
-  offsets[i] = Math.random() * Math.PI * 2;
-}
-
-geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-geometry.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
-geometry.setAttribute('aOffset', new THREE.BufferAttribute(offsets, 1));
-const basePositions = new Float32Array(positions);
-
-const particleMaterial = new THREE.PointsMaterial({
-  color: 0xbd4cff,
-  size: 0.15,
-  transparent: true,
-  opacity: 0.85,
-  depthWrite: false,
-  blending: THREE.AdditiveBlending,
-});
-
-const particles = new THREE.Points(geometry, particleMaterial);
-scene.add(particles);
-
-const pulseLight = new THREE.PointLight(0x66ff9c, 0.9, 200, 2);
-pulseLight.position.set(0, 0, 12);
-scene.add(pulseLight);
-
-const ambientLight = new THREE.AmbientLight(0x11151b, 0.9);
-scene.add(ambientLight);
+let particleCount = isMobileView ? 1100 : 2200;
+let geometry = null;
+let positions = null;
+let speeds = null;
+let offsets = null;
+let basePositions = null;
+let particleMaterial = null;
+let particles = null;
 
 const params = {
   focus: 1,
@@ -61,37 +46,84 @@ const params = {
   tower: 0,
 };
 
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-const target3D = new THREE.Vector3();
-let cursorX = window.innerWidth / 2;
-let cursorY = window.innerHeight / 2;
-let activeSection = null;
+function getParticleCount(width) {
+  return width < 768 ? 1100 : 2200;
+}
 
-const interactiveSections = document.querySelectorAll('[data-interactive]');
+function getParticleSize(width) {
+  return width < 768 ? 0.12 : 0.15;
+}
 
-function onMouseMove(event) {
-  cursorX = event.clientX;
-  cursorY = event.clientY;
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+function disposeParticles() {
+  if (particles) {
+    scene.remove(particles);
+    particles.geometry.dispose();
+  }
+  if (particleMaterial) {
+    particleMaterial.dispose();
+  }
+}
 
-  laserCore.style.left = `${event.clientX}px`;
-  laserCore.style.top = `${event.clientY}px`;
+function buildParticles(width) {
+  particleCount = getParticleCount(width);
+  geometry = new THREE.BufferGeometry();
+  positions = new Float32Array(particleCount * 3);
+  speeds = new Float32Array(particleCount);
+  offsets = new Float32Array(particleCount);
 
+  for (let i = 0; i < particleCount; i += 1) {
+    const radius = THREE.MathUtils.lerp(6, 28, Math.random());
+    const angle = Math.random() * Math.PI * 2;
+    positions[i * 3] = Math.cos(angle) * radius;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = Math.sin(angle) * radius;
+    speeds[i] = 0.8 + Math.random() * 1.8;
+    offsets[i] = Math.random() * Math.PI * 2;
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
+  geometry.setAttribute('aOffset', new THREE.BufferAttribute(offsets, 1));
+  basePositions = new Float32Array(positions);
+
+  particleMaterial = new THREE.PointsMaterial({
+    color: 0xbd4cff,
+    size: getParticleSize(width),
+    transparent: true,
+    opacity: 0.85,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  particles = new THREE.Points(geometry, particleMaterial);
+  scene.add(particles);
+}
+
+function rebuildParticles(width) {
+  disposeParticles();
+  buildParticles(width);
+}
+
+buildParticles(window.innerWidth);
+
+function setLaserPosition(clientX, clientY) {
   const centerX = window.innerWidth / 2;
   const centerY = window.innerHeight / 2;
-  const dx = event.clientX - centerX;
-  const dy = event.clientY - centerY;
+  const dx = clientX - centerX;
+  const dy = clientY - centerY;
   const distance = Math.sqrt(dx * dx + dy * dy);
   const angle = Math.atan2(dy, dx);
 
+  laserCore.style.left = `${clientX}px`;
+  laserCore.style.top = `${clientY}px`;
   laserBeam.style.left = `${centerX}px`;
   laserBeam.style.top = `${centerY}px`;
   laserBeam.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`;
   laserBeam.style.height = `${Math.min(distance * 1.05, 1100)}px`;
+}
 
-  const hovered = event.target.closest('[data-interactive]');
+function updateHoverState(element) {
+  const hovered = element && element.closest && element.closest('[data-interactive]');
   if (hovered) {
     body.classList.add('hover-active');
     params.warp = 0.54;
@@ -103,14 +135,129 @@ function onMouseMove(event) {
   }
 }
 
-document.addEventListener('mousemove', onMouseMove);
+function updatePointerPosition(clientX, clientY, element) {
+  setLaserPosition(clientX, clientY);
+  updateHoverState(element || document.elementFromPoint(clientX, clientY));
+}
 
-function resize() {
+function onMouseMove(event) {
+  updatePointerPosition(event.clientX, event.clientY, event.target);
+}
+
+function onTouchMove(event) {
+  const touch = event.touches[0] || event.changedTouches[0];
+  if (!touch) {
+    return;
+  }
+  updatePointerPosition(touch.clientX, touch.clientY, document.elementFromPoint(touch.clientX, touch.clientY));
+}
+
+function onTouchStart(event) {
+  const touch = event.touches[0] || event.changedTouches[0];
+  if (!touch) {
+    return;
+  }
+  updatePointerPosition(touch.clientX, touch.clientY, document.elementFromPoint(touch.clientX, touch.clientY));
+}
+
+if (isTouchDevice) {
+  document.addEventListener('touchstart', onTouchStart, { passive: true });
+  document.addEventListener('touchmove', onTouchMove, { passive: true });
+} else {
+  document.addEventListener('mousemove', onMouseMove);
+}
+
+function resizeScene() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  const nextMobileView = window.innerWidth < 768;
+  if (nextMobileView !== isMobileView) {
+    isMobileView = nextMobileView;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileView ? 1.5 : 2));
+    rebuildParticles(window.innerWidth);
+  }
 }
-window.addEventListener('resize', resize);
+
+function debounce(fn, wait = 150) {
+  let timeout = null;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), wait);
+  };
+}
+
+const handleResize = debounce(() => {
+  resizeScene();
+  updateMobileHud();
+}, 150);
+
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', handleResize);
+
+function updateMobileHud() {
+  if (!statusStrip || !topBar) {
+    return;
+  }
+
+  if (window.innerWidth < 768) {
+    if (!statusStrip.classList.contains('mobile-status')) {
+      statusStrip.classList.add('mobile-status');
+      topBar.appendChild(statusStrip);
+    }
+  } else {
+    if (statusStrip.classList.contains('mobile-status')) {
+      statusStrip.classList.remove('mobile-status');
+      const heroPanel = document.querySelector('.hero-panel');
+      if (heroPanel) {
+        heroPanel.appendChild(statusStrip);
+      }
+    }
+  }
+}
+
+function openMobileMenu() {
+  if (!mobileMenuPanel || !mobileMenuToggle) return;
+  body.classList.add('mobile-menu-open');
+  mobileMenuPanel.setAttribute('aria-hidden', 'false');
+  mobileMenuToggle.setAttribute('aria-expanded', 'true');
+  mobileMenuToggle.classList.add('open');
+  if (menuLabel) {
+    menuLabel.textContent = 'CLOSE';
+  }
+}
+
+function closeMobileMenu() {
+  if (!mobileMenuPanel || !mobileMenuToggle) return;
+  body.classList.remove('mobile-menu-open');
+  mobileMenuPanel.setAttribute('aria-hidden', 'true');
+  mobileMenuToggle.setAttribute('aria-expanded', 'false');
+  mobileMenuToggle.classList.remove('open');
+  if (menuLabel) {
+    menuLabel.textContent = 'MENU';
+  }
+}
+
+if (mobileMenuToggle) {
+  mobileMenuToggle.addEventListener('click', openMobileMenu);
+}
+
+if (mobileMenuClose) {
+  mobileMenuClose.addEventListener('click', closeMobileMenu);
+}
+
+const mobileMenuLinks = document.querySelectorAll('.mobile-menu-nav a');
+mobileMenuLinks.forEach((link) => {
+  link.addEventListener('click', closeMobileMenu);
+});
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && body.classList.contains('mobile-menu-open')) {
+    closeMobileMenu();
+  }
+});
+
+updateMobileHud();
 
 function animateParticles(time) {
   const positionsAttr = geometry.getAttribute('position');
@@ -140,15 +287,22 @@ function animateParticles(time) {
 }
 
 function render(time) {
-  const t = time;
-  animateParticles(t);
-  pulseLight.intensity = 0.75 + Math.sin(t * 0.0015) * 0.2;
-  camera.position.x = Math.sin(t * 0.00015) * 2.6;
-  camera.position.y = Math.cos(t * 0.00009) * 1.2;
+  animateParticles(time);
+  pulseLight.intensity = 0.75 + Math.sin(time * 0.0015) * 0.2;
+  camera.position.x = Math.sin(time * 0.00015) * 2.6;
+  camera.position.y = Math.cos(time * 0.00009) * 1.2;
   camera.lookAt(0, 0, 0);
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }
+
+const pulseLight = new THREE.PointLight(0x66ff9c, 0.9, 200, 2);
+pulseLight.position.set(0, 0, 12);
+scene.add(pulseLight);
+
+const ambientLight = new THREE.AmbientLight(0x11151b, 0.9);
+scene.add(ambientLight);
+
 requestAnimationFrame(render);
 
 function splitTextContent(selector) {
