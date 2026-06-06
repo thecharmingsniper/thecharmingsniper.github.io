@@ -1,597 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Charming Sniper</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-<!-- 3D REDESIGN LIBRARIES -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<script src="https://unpkg.com/@studio-freight/lenis@1.0.19/dist/lenis.min.js"></script>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<!-- CURSOR -->
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursor-ring">
-  <svg class="cursor-crosshair-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="20" cy="20" r="19" stroke="#C9A84C" stroke-width="0.5" opacity="0.3"/>
-    <circle cx="20" cy="20" r="10" stroke="#C9A84C" stroke-width="0.5" opacity="0.5"/>
-    <line x1="20" y1="0" x2="20" y2="6" stroke="#C9A84C" stroke-width="0.8"/>
-    <line x1="20" y1="34" x2="20" y2="40" stroke="#C9A84C" stroke-width="0.8"/>
-    <line x1="0" y1="20" x2="6" y2="20" stroke="#C9A84C" stroke-width="0.8"/>
-    <line x1="34" y1="20" x2="40" y2="20" stroke="#C9A84C" stroke-width="0.8"/>
-    <circle cx="20" cy="20" r="1.5" fill="#C9A84C"/>
-  </svg>
-</div>
-<canvas id="webgl-canvas"></canvas>
-
-<!-- NAV -->
-<nav id="nav">
-  <a href="#" class="nav-logo">
-    <div class="nav-mark">
-      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="18" cy="18" r="16.5" stroke="#534AB7" stroke-width="1.2"/>
-        <circle cx="18" cy="18" r="8" stroke="#AFA9EC" stroke-width="0.8"/>
-        <line x1="0" y1="18" x2="10" y2="18" stroke="#534AB7" stroke-width="1"/>
-        <line x1="26" y1="18" x2="36" y2="18" stroke="#534AB7" stroke-width="1"/>
-        <line x1="18" y1="0" x2="18" y2="10" stroke="#534AB7" stroke-width="1"/>
-        <line x1="18" y1="26" x2="18" y2="36" stroke="#534AB7" stroke-width="1"/>
-        <circle cx="18" cy="18" r="2.5" fill="white"/>
-      </svg>
-    </div>
-    <div class="nav-wordmark">
-      <span class="nav-charm">Charming</span>
-      <div class="nav-rule"></div>
-      <span class="nav-sniper">Sniper</span>
-    </div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="#origin">Origin</a></li>
-    <li><a href="#values">Values</a></li>
-    <li><a href="#merch">Merch</a></li>
-    <li><a href="https://theaim.beehiiv.com/">The Aim</a></li>
-  </ul>
-  <a href="https://theaim.beehiiv.com/subscribe" class="nav-cta">Join The Aim</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero" id="hero">
-  <canvas id="particle-canvas"></canvas>
-  <div class="hero-grid-overlay"></div>
-
-  <!-- Large bg crosshair -->
-  <svg class="hero-crosshair" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="160" cy="160" r="158" stroke="#534AB7" stroke-width="1"/>
-    <circle cx="160" cy="160" r="120" stroke="#534AB7" stroke-width="0.6"/>
-    <circle cx="160" cy="160" r="80" stroke="#C9A84C" stroke-width="0.6"/>
-    <circle cx="160" cy="160" r="40" stroke="#C9A84C" stroke-width="0.8"/>
-    <line x1="0" y1="160" x2="130" y2="160" stroke="#534AB7" stroke-width="0.8"/>
-    <line x1="190" y1="160" x2="320" y2="160" stroke="#534AB7" stroke-width="0.8"/>
-    <line x1="160" y1="0" x2="160" y2="130" stroke="#534AB7" stroke-width="0.8"/>
-    <line x1="160" y1="190" x2="160" y2="320" stroke="#534AB7" stroke-width="0.8"/>
-    <circle cx="160" cy="160" r="6" fill="#534AB7" opacity="0.6"/>
-    <circle cx="160" cy="160" r="2" fill="white"/>
-  </svg>
-
-  <div class="hero-content">
-    <div class="hero-eyebrow">Precision pointed at care</div>
-    <h1 class="hero-headline">
-      You were never<br>
-      the <em>problem.</em><br>
-      You were just <span class="purple">unaimed.</span>
-    </h1>
-    <p class="hero-sub">The energy, the awareness, the intensity they kept asking you to dim — none of it was wrong. <br>You just never got shown where to point it. That's what this is for.</p>
-    <div class="hero-ctas">
-      <a href="#newsletter" class="btn-primary">Join The Aim</a>
-      <a href="#origin" class="btn-secondary">Our Story</a>
-    </div>
-  </div>
-
-  <div class="hero-scroll-hint">
-    <div class="scroll-line"></div>
-    <span class="scroll-text">Scroll</span>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track" id="marquee">
-    <div class="marquee-item">Precision Pointed at Care <span class="sep">✦</span> I See You <span class="sep">✦</span> I've Got You <span class="sep">✦</span> I Don't Miss <span class="sep">✦</span> Sharp for the World <span class="sep">✦</span> Soft for My People <span class="sep">✦</span> Built for Chaos <span class="sep">✦</span> Trained into Precision <span class="sep">✦</span></div>
-    <div class="marquee-item">Precision Pointed at Care <span class="sep">✦</span> I See You <span class="sep">✦</span> I've Got You <span class="sep">✦</span> I Don't Miss <span class="sep">✦</span> Sharp for the World <span class="sep">✦</span> Soft for My People <span class="sep">✦</span> Built for Chaos <span class="sep">✦</span> Trained into Precision <span class="sep">✦</span></div>
-  </div>
-</div>
-
-<!-- ORIGIN -->
-<section class="origin" id="origin">
-  <div class="origin-inner">
-    <div class="origin-visual">
-      <div class="origin-ring"></div>
-      <div class="origin-ring"></div>
-      <div class="origin-ring"></div>
-      <div class="origin-ring"></div>
-      <div class="origin-crosshair-center">
-        <svg viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="170" cy="170" r="168" stroke="#534AB7" stroke-width="0.8" opacity="0.4"/>
-          <circle cx="170" cy="170" r="90" stroke="#AFA9EC" stroke-width="0.6" opacity="0.5"/>
-          <line x1="0" y1="170" x2="125" y2="170" stroke="#534AB7" stroke-width="0.8" opacity="0.7"/>
-          <line x1="215" y1="170" x2="340" y2="170" stroke="#534AB7" stroke-width="0.8" opacity="0.7"/>
-          <line x1="170" y1="0" x2="170" y2="125" stroke="#534AB7" stroke-width="0.8" opacity="0.7"/>
-          <line x1="170" y1="215" x2="170" y2="340" stroke="#534AB7" stroke-width="0.8" opacity="0.7"/>
-          <circle cx="170" cy="170" r="16" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
-          <circle cx="170" cy="170" r="5" fill="#C9A84C" opacity="0.9"/>
-          <circle cx="170" cy="170" r="2" fill="white"/>
-          <!-- tick marks -->
-          <line x1="170" y1="2" x2="170" y2="14" stroke="#534AB7" stroke-width="0.8" opacity="0.4"/>
-          <line x1="170" y1="326" x2="170" y2="338" stroke="#534AB7" stroke-width="0.8" opacity="0.4"/>
-          <line x1="2" y1="170" x2="14" y2="170" stroke="#534AB7" stroke-width="0.8" opacity="0.4"/>
-          <line x1="326" y1="170" x2="338" y2="170" stroke="#534AB7" stroke-width="0.8" opacity="0.4"/>
-        </svg>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Charming Sniper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ogg:ital,wght@0,400;0,700;1,400;1,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <canvas id="three-canvas"></canvas>
+      <div class="laser-layer" aria-hidden="true">
+        <div class="laser-core"></div>
+        <div class="laser-beam"></div>
       </div>
-    </div>
-    <div class="origin-text reveal">
-      <div class="section-tag">Origin</div>
-      <h2 class="section-heading">The name <em>came first.</em></h2>
-      <blockquote class="origin-quote">
-        "My friends called me Sniper long before I turned it into anything. They gave me the name because I catch everything — the tiny detail that changed since last time, the face across a packed room, the flicker when someone's words don't match what they're feeling."
-      </blockquote>
-      <p class="origin-attr">— Aryaman "The Charming Sniper"</p>
-      <p class="origin-p">My mind never had an off switch. For years I thought something was wrong with me, I'd sit with that feeling for a long time before I stopped believing it. Now I know. It was never a flaw. It was the engine. It's been running on default my whole life, and I'm done apologising for it.</p>
-    </div>
-  </div>
-</section>
+      <header class="top-bar">
+        <div class="brand-mark">
+          <span>CH</span>
+          <span>SN</span>
+        </div>
+        <nav>
+          <a href="#hero">Threshold</a>
+          <a href="#origin">Origin</a>
+          <a href="#synapse">Synapse</a>
+          <a href="#values">Frequencies</a>
+          <a href="#history">History</a>
+          <a href="#archive">Merch</a>
+        </nav>
+      </header>
 
-<!-- FOR YOU IF -->
-<section class="for-you-section">
-  <div class="for-you-inner reveal">
-    <div class="section-tag section-tag-center">This is for you if</div>
-    <div class="for-you-grid">
-      <div class="for-you-card">
-        <div class="for-you-num">01</div>
-        <div class="for-you-text">Your brain never fully shuts off — not when you're tired, not when you're supposed to be relaxing, not at 2am.</div>
-      </div>
-      <div class="for-you-card">
-        <div class="for-you-num">02</div>
-        <div class="for-you-text">You've been told you're too intense, too sensitive, too much — and part of you started to believe it.</div>
-      </div>
-      <div class="for-you-card">
-        <div class="for-you-num">03</div>
-        <div class="for-you-text">You feel everything at full volume — other people's moods, the tension in a room, the thing nobody else noticed.</div>
-      </div>
-      <div class="for-you-card">
-        <div class="for-you-num">04</div>
-        <div class="for-you-text">Or maybe none of that is you — but you're tired of brands that only talk to one kind of person, and you want to be around people who are real about how they move through the world.</div>
-      </div>
-    </div>
-    <p class="for-you-footer-text">You don't need a diagnosis to belong here. You just need to be done pretending the way you're built is something to fix.</p>
-  </div>
-</section>
-
-<!-- VALUES -->
-<section class="values" id="values">
-  <div class="section-inner">
-    <div class="reveal">
-      <div class="section-tag">What We Stand For</div>
-      <h2 class="section-heading">Seven things I actually live by.<br><em>Not a list. A way of moving.</em></h2>
-    </div>
-    <div class="values-grid">
-      <div class="value-card reveal reveal-delay-1">
-        <div class="value-num">01 — Love</div>
-        <div class="value-name">Love</div>
-        <div class="value-desc">Not the soft kind. The kind that shows up, stays, and protects. Loyalty is just love that doesn't leave.</div>
-        <div class="value-icon">♥</div>
-      </div>
-      <div class="value-card reveal reveal-delay-2">
-        <div class="value-num">02 — Acceptance</div>
-        <div class="value-name">Acceptance</div>
-        <div class="value-desc">Take yourself exactly how you're built, then sharpen it. Nobody here has to mask to belong.</div>
-        <div class="value-icon">◯</div>
-      </div>
-      <div class="value-card reveal reveal-delay-3">
-        <div class="value-num">03 — Authenticity</div>
-        <div class="value-name">Acceptance</div>
-        <div class="value-desc">Real and rough beats polished and fake every time. If you can't say it straight, don't say it at all.</div>
-        <div class="value-icon">✦</div>
-      </div>
-      <div class="value-card reveal reveal-delay-1">
-        <div class="value-num">04 — Justice</div>
-        <div class="value-name">Justice</div>
-        <div class="value-desc">Fairness isn't optional. We stand in front of the people who can't fight it alone. That's what the awareness is for.</div>
-        <div class="value-icon">⚖</div>
-      </div>
-      <div class="value-card reveal reveal-delay-2">
-        <div class="value-num">05 — Awareness</div>
-        <div class="value-name">Awareness</div>
-        <div class="value-desc">The mind never stops scanning. The detail other people miss is the whole game. We stopped apologising for it.</div>
-        <div class="value-icon">◉</div>
-      </div>
-      <div class="value-card reveal reveal-delay-3">
-        <div class="value-num">06 — Discipline</div>
-        <div class="value-name">Discipline</div>
-        <div class="value-desc">Wild energy that isn't aimed just burns you down. Train the body, sharpen the skills, guard the mind. Daily choice.</div>
-        <div class="value-icon">△</div>
-      </div>
-      <div class="value-card reveal reveal-delay-1">
-        <div class="value-num">07 — Novelty</div>
-        <div class="value-name">Novelty</div>
-        <div class="value-desc">Stale kills me. New angles, new ground, new problems — that's where I come alive. I was never built for a little, forever. All the way, right now.</div>
-        <div class="value-icon">↗</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROMISE -->
-<section class="promise-section">
-  <div class="promise-bg"></div>
-  <div class="promise-inner">
-    <div class="reveal">
-      <div class="section-tag section-tag-center">The Promise</div>
-      <p class="promise-line">
-        Nothing in you is <em>wasted</em> here.<br>
-        Not the restless energy.<br> Not the relentless <span class="under">awareness.</span><br>
-        Not the intensity the world kept asking you to dim.
-      </p>
-      <p class="promise-sub">It's harnessed, not hidden. Aimed, not apologised for. Everyone seen. Nothing squandered.</p>
-      <a href="https://theaim.beehiiv.com/subscribe" class="btn-primary">I'm in.</a>
-    </div>
-  </div>
-</section>
-
-<!-- MERCH -->
-<section class="merch" id="merch">
-  <div class="section-inner">
-    <div class="merch-header reveal">
-      <div>
-        <div class="section-tag">The Drop</div>
-        <h2 class="section-heading">Merch design is coming soon.</h2>
-        <p class="merch-tease-copy">The collection is being refined to match the same precision, intensity, and care you feel across this project. Expect something sharp, grounded, and built to land.</p>
-      </div>
-    </div>
-
-    <!-- merch catalog archived while design is being refined -->
-    <div class="merch-coming-soon reveal">
-      <div class="merch-coming-soon-copy">
-        <div class="section-tag">Ready when the look is right</div>
-        <h3>We’re taking the time to make this release feel worth the wait.</h3>
-        <p>Every piece will be designed with intention — bold graphics, considered materials, and a story that connects to the aim behind this brand.</p>
-      </div>
-      <a href="https://theaim.beehiiv.com/subscribe" class="btn-primary">Join The Aim for early access</a>
-      <p class="merch-soon-note">Early previews and the first chance to see the launch are reserved for the list.</p>
-    </div>
-
-    <template class="merch-archive">
-      <!-- Card 1 -->
-      <div class="merch-card reveal reveal-delay-1" data-cat="apparel limited">
-        <div class="merch-img">
-          <div class="merch-badge">New Drop</div>
-          <div class="merch-img-inner">
-            <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-              <rect width="280" height="280" fill="#0d0d1a"/>
-              <rect x="70" y="60" width="140" height="160" rx="4" fill="#1e1e3a"/>
-              <!-- tee shape -->
-              <path d="M70 90 L40 110 L65 130 L80 120 L80 220 L200 220 L200 120 L215 130 L240 110 L210 90 L185 80 L170 70 L140 76 L110 70 L95 80 Z" fill="#1a1a2e" stroke="#534AB7" stroke-width="0.8"/>
-              <!-- crosshair on tee -->
-              <circle cx="140" cy="148" r="28" stroke="#534AB7" stroke-width="1" fill="none"/>
-              <circle cx="140" cy="148" r="10" stroke="#AFA9EC" stroke-width="0.8" fill="none"/>
-              <line x1="106" y1="148" x2="126" y2="148" stroke="#534AB7" stroke-width="0.8"/>
-              <line x1="154" y1="148" x2="174" y2="148" stroke="#534AB7" stroke-width="0.8"/>
-              <line x1="140" y1="114" x2="140" y2="134" stroke="#534AB7" stroke-width="0.8"/>
-              <line x1="140" y1="162" x2="140" y2="182" stroke="#534AB7" stroke-width="0.8"/>
-              <circle cx="140" cy="148" r="2.5" fill="#C9A84C"/>
-              <!-- brand text -->
-              <text x="140" y="104" font-family="serif" font-size="7" fill="#AFA9EC" text-anchor="middle" letter-spacing="3">CHARMING SNIPER</text>
-            </svg>
+      <main>
+        <section class="hero section-drop" id="hero" data-interactive>
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <div class="eyebrow">THE UNDERGROUND PORTAL</div>
+              <h1>
+                A laser-focused creative technology atelier where
+                ADHD energy, techno science, and underground rave architecture
+                are forged into kinetic digital strategy.
+              </h1>
+              <p class="hero-subtitle">
+                This is the threshold. Step in from the alley into a raw industrial
+                warehouse mindspace built for structural intensity and precision-led
+                creative execution.
+              </p>
+            </div>
+            <aside class="hero-panel">
+              <div class="telemetry-group">
+                <span class="label">ACTIVE SITE</span>
+                <strong>43.6532° N, 79.3832° W / TORONTO</strong>
+              </div>
+              <div class="telemetry-group">
+                <span class="label">RHYTHM</span>
+                <strong><span class="bpm">148</span> BPM</strong>
+              </div>
+              <div class="telemetry-group">
+                <span class="label">PHASE</span>
+                <strong>PORTAL SINGULARITY</strong>
+              </div>
+              <div class="status-strip">
+                <span>radium laser tracker online</span>
+                <span>synapse sync active</span>
+              </div>
+            </aside>
           </div>
-          <div class="merch-quick">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="#AFA9EC" stroke-width="1.2"/></svg>
+        </section>
+
+        <section class="origin section-drop" id="origin" data-interactive>
+          <div class="section-overlay"></div>
+          <div class="origin-layout">
+            <div class="origin-panel">
+              <div class="section-label">ORIGIN STORY</div>
+              <h2>
+                Charming Sniper is the focused instrument of an attention system
+                the world called "unaimed." The chaos becomes a precision tool.
+              </h2>
+              <p>
+                Built in Toronto with the pulse of concrete underground spaces, this
+                brand is an industrial meditation on tuning neurodivergent energy
+                into digital intent.
+              </p>
+            </div>
+            <div class="origin-copy">
+              <p>
+                In a society that names rapid cognition as scattered, Charming Sniper
+                rewrites the metaphor: the mind that fires in all directions can also
+                become the sniper’s gaze. When continuous, structured techno loops
+                meet execution, the attention that was once ambient noise lands with
+                absolute accuracy.
+              </p>
+              <p>
+                The brand is not soft. It is a calibrated response to the modern
+                condition — where ADHD’s relentless motion is shaped into a parallel
+                system of strategy, ritual, and underground code.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="synapse section-drop" id="synapse" data-interactive>
+          <div class="console-shell">
+            <div class="console-top">
+              <div class="section-label">SYNAPSE &amp; SYNC</div>
+              <h2>ADHD × TECHNO × RAVE SCIENCE</h2>
+            </div>
+            <div class="console-grid">
+              <div class="console-card waveform-card">
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+              </div>
+              <div class="console-copy">
+                <div class="console-block">
+                  <span class="console-title">DOPAMINE REGULATION</span>
+                  <p>
+                    The repetitive 4/4 kick and relentless sub-bass provide a
+                    structured, high-stimulus environment that quiets the ADHD mind’s
+                    ambient noise. Predictable rhythm becomes an anchor for intense focus.
+                  </p>
+                </div>
+                <div class="console-block">
+                  <span class="console-title">SENSORY ENTRAINMENT</span>
+                  <p>
+                    Hypnotic light, sound, and movement create an external pacing
+                    mechanism. The brain syncs with the pulse, enabling flow-state
+                    engineering, executive focus, and a kind of mental healing.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="values section-drop" id="values" data-interactive>
+          <div class="section-label">THE 7 FREQUENCIES OF VALUE</div>
+          <div class="masonry-grid">
+            <article class="value-card frequency-32">
+              <span class="frequency">32 Hz</span>
+              <h3>Grounded Love</h3>
+              <p>The sub-bass foundation. Unconditional, heavy, un-shakable support for the community.</p>
+            </article>
+            <article class="value-card frequency-44">
+              <span class="frequency">44 Hz</span>
+              <h3>Structural Acceptance</h3>
+              <p>Radical validation of the self and others, allowing people to exist precisely as they are.</p>
+            </article>
+            <article class="value-card frequency-56">
+              <span class="frequency">56 Hz</span>
+              <h3>Raw Authenticity</h3>
+              <p>Stripping away the corporate filter; unfiltered, uncompromised creative execution.</p>
+            </article>
+            <article class="value-card frequency-68">
+              <span class="frequency">68 Hz</span>
+              <h3>Equalized Justice</h3>
+              <p>Balance, fairness, and architectural alignment within society.</p>
+            </article>
+            <article class="value-card frequency-84">
+              <span class="frequency">84 Hz</span>
+              <h3>Amplified Awareness</h3>
+              <p>Ultimate perception; tracking the fine details that others overlook.</p>
+            </article>
+            <article class="value-card frequency-104">
+              <span class="frequency">104 Hz</span>
+              <h3>Rigorous Discipline</h3>
+              <p>The mechanical loop; showing up continuously to master the craft.</p>
+            </article>
+            <article class="value-card frequency-128">
+              <span class="frequency">128 Hz</span>
+              <h3>Sonic Novelty</h3>
+              <p>The unexpected switch; constant pursuit of innovation, fresh perspectives, and creative dopamine.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="history section-drop" id="history" data-interactive>
+          <div class="history-track">
+            <div class="track-point">
+              <span class="track-year">1988</span>
+              <h3>The Second Summer of Love</h3>
+              <p>The birth of acid house, illegal outdoor gatherings, and the explosion of collective consciousness.</p>
+            </div>
+            <div class="track-point">
+              <span class="track-year">1997</span>
+              <h3>The Underground Industrial Age</h3>
+              <p>The migration into abandoned concrete warehouses. The sound becomes darker, heavier, faster, and more mechanical.</p>
+            </div>
+            <div class="track-point">
+              <span class="track-year">2026+</span>
+              <h3>The Modern Horizon</h3>
+              <p>The contemporary renaissance where techno culture meets creative technology, digital architecture, and subcultural design.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="archive section-drop" id="archive" data-interactive>
+          <div class="archive-shell">
+            <div class="display-case"></div>
+            <div class="archive-copy">
+              <p><strong>Merch design is coming soon.</strong></p>
+              <p>The collection is being refined to match the same precision, intensity, and care you feel across this project. Expect something sharp, grounded, and built to land.</p>
+              <p><strong>Ready when the look is right.</strong></p>
+              <p>We’re taking the time to make this release feel worth the wait. Every piece will be designed with intention — bold graphics, considered materials, and a story that connects to the aim behind this brand.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="pillars section-drop" id="pillars" data-interactive>
+          <div class="pillars-shell">
+            <div class="pillar-item">
+              <span>01 / Intentional Execution</span>
+              <p>Never move a pixel without a clear, structural purpose.</p>
+            </div>
+            <div class="pillar-item">
+              <span>02 / Controlled Chaos</span>
+              <p>Funneling chaotic creative energy into razor-sharp technical outputs.</p>
+            </div>
+            <div class="pillar-item">
+              <span>03 / Subcultural Grounding</span>
+              <p>Staying tethered to raw, authentic community spaces over corporate trends.</p>
+            </div>
+            <div class="pillar-item">
+              <span>04 / Structural Empathy</span>
+              <p>Designing experiences with deep human understanding and psychological alignment.</p>
+            </div>
+            <div class="pillar-item">
+              <span>05 / Absolute Precision</span>
+              <p>Refining the craft until it achieves structural perfection.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer-shell">
+        <div class="footer-grid">
+          <div>
+            <h4>NAVIGATE</h4>
+            <a href="#hero">Threshold</a>
+            <a href="#origin">Origin</a>
+            <a href="#synapse">Synapse</a>
+          </div>
+          <div>
+            <h4>SHOP</h4>
+            <a href="#archive">Merch Coming Soon</a>
+            <a href="#archive">Collection Preview</a>
+          </div>
+          <div>
+            <h4>CONNECT</h4>
+            <a href="mailto:hello@charmingsniper.com">charmingsniper@gmail.com</a>
+            <a href="https://www.instagram.com/thecharmingsniper/">Instagram</a>
           </div>
         </div>
-        <div class="merch-info">
-          <div class="merch-category">Apparel</div>
-          <div class="merch-name">Crosshair Tee — Midnight</div>
-          <div class="merch-bottom">
-            <div class="merch-price">$48</div>
-            <button class="btn-add">Add to Cart</button>
-          </div>
+        <div class="footer-meta">
+          <span>Copyright © 2026 Charming Sniper</span>
+          <span>Built as a precision-led creative tech atelier in Toronto.</span>
         </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="merch-card reveal reveal-delay-2" data-cat="apparel">
-        <div class="merch-img">
-          <div class="merch-img-inner">
-            <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-              <rect width="280" height="280" fill="#0d0d1a"/>
-              <!-- hoodie shape -->
-              <path d="M55 100 L30 125 L55 145 L70 135 L70 230 L210 230 L210 135 L225 145 L250 125 L225 100 L200 85 L175 70 Q155 60 140 65 Q125 60 105 70 L80 85 Z" fill="#1e1e3a" stroke="#C9A84C" stroke-width="0.8"/>
-              <path d="M120 68 Q140 72 160 68 Q155 88 140 92 Q125 88 120 68Z" fill="#171730"/>
-              <text x="140" y="165" font-family="serif" font-size="11" fill="#C9A84C" text-anchor="middle" letter-spacing="1" font-style="italic">Sharp for</text>
-              <text x="140" y="182" font-family="serif" font-size="11" fill="#C9A84C" text-anchor="middle" letter-spacing="1" font-style="italic">the World.</text>
-              <line x1="110" y1="188" x2="170" y2="188" stroke="#534AB7" stroke-width="0.6"/>
-              <text x="140" y="200" font-family="sans-serif" font-size="6" fill="#534AB7" text-anchor="middle" letter-spacing="3">CHARMING SNIPER</text>
-            </svg>
-          </div>
-          <div class="merch-quick">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="#AFA9EC" stroke-width="1.2"/></svg>
-          </div>
-        </div>
-        <div class="merch-info">
-          <div class="merch-category">Apparel</div>
-          <div class="merch-name">Sharp for the World Hoodie</div>
-          <div class="merch-bottom">
-            <div class="merch-price">$84</div>
-            <button class="btn-add">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="merch-card reveal reveal-delay-3" data-cat="accessories limited">
-        <div class="merch-img">
-          <div class="merch-badge limited">Limited</div>
-          <div class="merch-img-inner">
-            <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-              <rect width="280" height="280" fill="#0d0d1a"/>
-              <!-- cap shape -->
-              <path d="M80 155 Q80 100 140 95 Q200 100 200 155 L210 160 L220 158 L218 165 L205 165 L200 170 L80 170 Z" fill="#1a1a2e" stroke="#C9A84C" stroke-width="0.8"/>
-              <path d="M80 155 L75 165 L200 165 L200 155Z" fill="#171730" stroke="#C9A84C" stroke-width="0.6"/>
-              <!-- embroidery crosshair -->
-              <circle cx="140" cy="133" r="18" stroke="#C9A84C" stroke-width="1.2" fill="none"/>
-              <circle cx="140" cy="133" r="6" stroke="#AFA9EC" stroke-width="0.8" fill="none"/>
-              <line x1="118" y1="133" x2="130" y2="133" stroke="#C9A84C" stroke-width="0.9"/>
-              <line x1="150" y1="133" x2="162" y2="133" stroke="#C9A84C" stroke-width="0.9"/>
-              <line x1="140" y1="111" x2="140" y2="123" stroke="#C9A84C" stroke-width="0.9"/>
-              <line x1="140" y1="143" x2="140" y2="155" stroke="#C9A84C" stroke-width="0.9"/>
-              <circle cx="140" cy="133" r="2" fill="#C9A84C"/>
-            </svg>
-          </div>
-          <div class="merch-quick">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="#AFA9EC" stroke-width="1.2"/></svg>
-          </div>
-        </div>
-        <div class="merch-info">
-          <div class="merch-category">Accessories</div>
-          <div class="merch-name">Gold Aim Snapback</div>
-          <div class="merch-bottom">
-            <div class="merch-price"><span class="merch-price-orig">$52</span>$42</div>
-            <button class="btn-add">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="merch-card reveal reveal-delay-1" data-cat="apparel">
-        <div class="merch-img">
-          <div class="merch-img-inner">
-            <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-              <rect width="280" height="280" fill="#0d0d1a"/>
-              <rect x="90" y="70" width="100" height="140" rx="4" fill="#1e1e3a" stroke="#534AB7" stroke-width="0.6"/>
-              <text x="140" y="128" font-family="serif" font-size="13" fill="white" text-anchor="middle" letter-spacing="0.5" font-style="italic">Soft for</text>
-              <text x="140" y="146" font-family="serif" font-size="13" fill="white" text-anchor="middle" letter-spacing="0.5" font-style="italic">My People.</text>
-              <line x1="105" y1="154" x2="175" y2="154" stroke="#C9A84C" stroke-width="0.8"/>
-              <text x="140" y="168" font-family="sans-serif" font-size="5.5" fill="#534AB7" text-anchor="middle" letter-spacing="3">CHARMING SNIPER</text>
-              <!-- pocket crosshair -->
-              <circle cx="107" cy="97" r="9" stroke="#C9A84C" stroke-width="0.8" fill="none"/>
-              <circle cx="107" cy="97" r="3" stroke="#AFA9EC" stroke-width="0.6" fill="none"/>
-              <line x1="96" y1="97" x2="101" y2="97" stroke="#C9A84C" stroke-width="0.7"/>
-              <line x1="113" y1="97" x2="118" y2="97" stroke="#C9A84C" stroke-width="0.7"/>
-              <line x1="107" y1="86" x2="107" y2="91" stroke="#C9A84C" stroke-width="0.7"/>
-              <line x1="107" y1="103" x2="107" y2="108" stroke="#C9A84C" stroke-width="0.7"/>
-              <circle cx="107" cy="97" r="1.5" fill="#C9A84C"/>
-            </svg>
-          </div>
-          <div class="merch-quick">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="#AFA9EC" stroke-width="1.2"/></svg>
-          </div>
-        </div>
-        <div class="merch-info">
-          <div class="merch-category">Apparel</div>
-          <div class="merch-name">My People Tee — Deep Field</div>
-          <div class="merch-bottom">
-            <div class="merch-price">$48</div>
-            <button class="btn-add">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 5 -->
-      <div class="merch-card reveal reveal-delay-2" data-cat="accessories">
-        <div class="merch-img">
-          <div class="merch-img-inner">
-            <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-              <rect width="280" height="280" fill="#0d0d1a"/>
-              <!-- tote shape -->
-              <rect x="80" y="100" width="120" height="130" rx="3" fill="#1e1e3a" stroke="#534AB7" stroke-width="0.7"/>
-              <path d="M110 100 Q110 75 140 72 Q170 75 170 100" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-              <!-- aim graphic -->
-              <circle cx="140" cy="165" r="34" stroke="#534AB7" stroke-width="0.8" fill="none" opacity="0.5"/>
-              <circle cx="140" cy="165" r="20" stroke="#534AB7" stroke-width="0.8" fill="none"/>
-              <circle cx="140" cy="165" r="8" stroke="#C9A84C" stroke-width="1" fill="none"/>
-              <line x1="85" y1="165" x2="128" y2="165" stroke="#534AB7" stroke-width="0.7" opacity="0.7"/>
-              <line x1="152" y1="165" x2="195" y2="165" stroke="#534AB7" stroke-width="0.7" opacity="0.7"/>
-              <line x1="140" y1="120" x2="140" y2="153" stroke="#534AB7" stroke-width="0.7" opacity="0.7"/>
-              <line x1="140" y1="177" x2="140" y2="215" stroke="#534AB7" stroke-width="0.7" opacity="0.7"/>
-              <circle cx="140" cy="165" r="2.5" fill="#C9A84C"/>
-            </svg>
-          </div>
-          <div class="merch-quick">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="#AFA9EC" stroke-width="1.2"/></svg>
-          </div>
-        </div>
-        <div class="merch-info">
-          <div class="merch-category">Accessories</div>
-          <div class="merch-name">Aim Tote — Canvas Black</div>
-          <div class="merch-bottom">
-            <div class="merch-price">$36</div>
-            <button class="btn-add">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 6 -->
-      <div class="merch-card reveal reveal-delay-3" data-cat="limited accessories">
-        <div class="merch-img">
-          <div class="merch-badge exclusive">Exclusive</div>
-          <div class="merch-img-inner">
-            <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-              <rect width="280" height="280" fill="#0d0d1a"/>
-              <!-- notebook / journal -->
-              <rect x="75" y="55" width="130" height="170" rx="4" fill="#1e1e3a"/>
-              <rect x="75" y="55" width="14" height="170" rx="2" fill="#534AB7" opacity="0.8"/>
-              <rect x="95" y="75" width="90" height="1" fill="#534AB7" opacity="0.3"/>
-              <rect x="95" y="90" width="80" height="1" fill="#534AB7" opacity="0.2"/>
-              <rect x="95" y="105" width="85" height="1" fill="#534AB7" opacity="0.2"/>
-              <!-- centered crosshair -->
-              <circle cx="140" cy="158" r="36" stroke="#C9A84C" stroke-width="1" fill="none" opacity="0.8"/>
-              <circle cx="140" cy="158" r="18" stroke="#534AB7" stroke-width="0.8" fill="none"/>
-              <circle cx="140" cy="158" r="6" stroke="#AFA9EC" stroke-width="0.7" fill="none"/>
-              <line x1="100" y1="158" x2="130" y2="158" stroke="#C9A84C" stroke-width="0.9"/>
-              <line x1="150" y1="158" x2="180" y2="158" stroke="#C9A84C" stroke-width="0.9"/>
-              <line x1="140" y1="118" x2="140" y2="148" stroke="#C9A84C" stroke-width="0.9"/>
-              <line x1="140" y1="168" x2="140" y2="198" stroke="#C9A84C" stroke-width="0.9"/>
-              <circle cx="140" cy="158" r="2.5" fill="white"/>
-              <text x="140" y="215" font-family="sans-serif" font-size="5.5" fill="#C9A84C" text-anchor="middle" letter-spacing="3">THE AIM</text>
-            </svg>
-          </div>
-          <div class="merch-quick">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="#AFA9EC" stroke-width="1.2"/></svg>
-          </div>
-        </div>
-        <div class="merch-info">
-          <div class="merch-category">Accessories — Limited</div>
-          <div class="merch-name">The Aim Journal — Gold Edition</div>
-          <div class="merch-bottom">
-            <div class="merch-price">$32</div>
-            <button class="btn-add">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
+      </footer>
     </div>
-    </template>
-  </div>
-</section>
 
-<!-- MANIFESTO -->
-<section class="manifesto-section" id="manifesto">
-  <div class="manifesto-large">PRECISION</div>
-  <div class="manifesto-content">
-    <div class="reveal manifesto-header">
-      <div class="section-tag">How This Works In Real Life</div>
-      <h2 class="section-heading">Five things.<br><em>The ones I come back to every time.</em></h2>
-    </div>
-    <div class="manifesto-grid">
-      <div class="manifesto-item reveal reveal-delay-1">
-        <div class="manifesto-num">01</div>
-        <div class="manifesto-text">Accept how you're built, then <em>sharpen it</em> instead of hiding it.</div>
-      </div>
-      <div class="manifesto-item reveal reveal-delay-2">
-        <div class="manifesto-num">02</div>
-        <div class="manifesto-text">Accept other people <em>exactly as they are.</em></div>
-      </div>
-      <div class="manifesto-item reveal reveal-delay-1">
-        <div class="manifesto-num">03</div>
-        <div class="manifesto-text">Lead with love. It costs nothing and <em>changes everything.</em></div>
-      </div>
-      <div class="manifesto-item reveal reveal-delay-2">
-        <div class="manifesto-num">04</div>
-        <div class="manifesto-text">Stay real, <em>especially when real</em> is the harder road.</div>
-      </div>
-      <div class="manifesto-item reveal reveal-delay-1 manifesto-item-wide">
-        <div class="manifesto-num">05</div>
-        <div class="manifesto-text">Train the body, sharpen the skills, guard the mind. <em>Discipline turns wild energy into aim.</em></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- NEWSLETTER -->
-<section class="newsletter" id="newsletter">
-  <div class="newsletter-inner">
-    <div class="reveal">
-      <div class="newsletter-issue">The Aim — Weekly Newsletter</div>
-      <h2 class="newsletter-heading">Find out <em>where to point it.</em></h2>
-      <p class="newsletter-sub">Every week — one idea about turning your wiring into your edge.<br> Not theory. <br>Real things I'm figuring out, written like a letter to someone who gets it. The kind of thing you read and think: finally, someone said it.</p>
-      <a href="https://theaim.beehiiv.com/subscribe" target="_blank" class="newsletter-btn">Join The Aim</a>
-      <p class="newsletter-note">No spam. No selling. Just the signal. Unsubscribe any time.</p>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer id="footer">
-  <div class="footer-top">
-    <div class="footer-brand">
-      <div class="footer-brand-logo">
-        <svg width="28" height="28" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="18" cy="18" r="16.5" stroke="#534AB7" stroke-width="1.2"/>
-          <circle cx="18" cy="18" r="8" stroke="#AFA9EC" stroke-width="0.8"/>
-          <line x1="0" y1="18" x2="10" y2="18" stroke="#534AB7" stroke-width="1"/>
-          <line x1="26" y1="18" x2="36" y2="18" stroke="#534AB7" stroke-width="1"/>
-          <line x1="18" y1="0" x2="18" y2="10" stroke="#534AB7" stroke-width="1"/>
-          <line x1="18" y1="26" x2="18" y2="36" stroke="#534AB7" stroke-width="1"/>
-          <circle cx="18" cy="18" r="2.5" fill="white"/>
-        </svg>
-        <div class="nav-wordmark">
-          <span class="nav-charm">Charming</span>
-          <div class="nav-rule"></div>
-          <span class="nav-sniper">Sniper</span>
-        </div>
-      </div>
-      <p class="footer-tagline">Precision pointed at care. For everyone wired too hot, too aware, too much.</p>
-    </div>
-    <div>
-      <div class="footer-col-title">Navigate</div>
-      <ul class="footer-links">
-        <li><a href="#origin">Origin</a></li>
-        <li><a href="#values">Values</a></li>
-        <li><a href="#merch">Merch</a></li>
-        <li><a href="https://theaim.beehiiv.com/subscribe">The Aim</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="footer-col-title">Shop</div>
-      <ul class="footer-links">
-        <li><a href="#merch">New Drops</a></li>
-        <li><a href="#merch">Apparel</a></li>
-        <li><a href="#merch">Accessories</a></li>
-        <li><a href="#merch">Limited Edition</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="footer-col-title">Connect</div>
-      <ul class="footer-links">
-        <li><a href="https://www.instagram.com/thecharmingsniper/">Instagram</a></li>
-        <li><a href="#">TikTok</a></li>
-        <li><a href="https://theaim.beehiiv.com/">Newsletter</a></li>
-        <li><a href="mailto:charmingsniper@gmail.com">Contact</a></li>
-        <li><a href="#">Telegram</a></li>
-        <li><a href="#">Discord</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span class="footer-copy">© 2026 Charming Sniper. All rights reserved.</span>
-    <div class="footer-social">
-      <a href="https://www.instagram.com/thecharmingsniper/" class="social-link" aria-label="Instagram">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
-      </a>
-      <a href="#" class="social-link" aria-label="TikTok">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.5a8.18 8.18 0 0 0 4.78 1.52V6.57a4.85 4.85 0 0 1-1.01.12z"/></svg>
-      </a>
-      <a href="https://theaim.beehiiv.com/subscribe" class="social-link" aria-label="Newsletter">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      </a>
-    </div>
-  </div>
-</footer>
-
-<script src="main.js"></script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
